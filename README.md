@@ -5,4 +5,4 @@ This is simple readme file.
 
 This is modified file.
 
-Modified2 on branch
+This is very bad commit to test`
