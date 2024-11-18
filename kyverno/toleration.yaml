@@ -1,0 +1,35 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-noexecute-toleration
+  annotations:
+    policies.kyverno.io/title: Require Key Parameter
+    policies.kyverno.io/category: Best Practices, EKS Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/minversion: 1.6.0
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+  - name: disallow-noexecute-toleration
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    preconditions: 
+      all: 
+        - key: "{{ request.operation }}"
+          operator: In 
+          value: 
+            - CREATE
+            - UPDATE
+    validate:
+      message: "Toleration with 'effect: NoExecute' and 'Operator: Exists' is not allowed, except for specified tolerations."
+      pattern:
+        spec:
+          tolerations: 
+          - key: "*"
+            operator: "*"
+            effect: "*"
